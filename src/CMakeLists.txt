@@ -6,6 +6,12 @@ project(bitshuffle
   #HOMEPAGE_URL https://github.com/kiyo-masui/bitshuffle
   LANGUAGES C)
 
-add_library(bitshuffle bitshuffle.c bitshuffle_core.c iochain.c)
-target_compile_options(bitshuffle PRIVATE "-mtune=generic")
-set_target_properties(bitshuffle PROPERTIES POSITION_INDEPENDENT_CODE ON)
+find_package(OpenMP REQUIRED)
+
+add_library(bitshuffle bitshuffle_core.c iochain.c)
+target_compile_options(bitshuffle PRIVATE "${OpenMP_C_FLAGS}")
+
+#target_compile_options(bitshuffle PRIVATE "-mtune=generic")
+#set_target_properties(bitshuffle PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+install(TARGET bitshuffle)
