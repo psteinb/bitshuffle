@@ -8,10 +8,19 @@ project(bitshuffle
 
 find_package(OpenMP REQUIRED)
 
-add_library(bitshuffle bitshuffle_core.c iochain.c)
-target_compile_options(bitshuffle PRIVATE "${OpenMP_C_FLAGS}")
+add_library(bitshuffle_core bitshuffle_core.c iochain.c)
+target_include_directories(bitshuffle_core PRIVATE ${CMAKE_SOURCE_DIR}/)
+set_target_properties(bitshuffle_core PROPERTIES PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/bitshuffle_core.h)
+target_compile_options(bitshuffle_core PUBLIC "${OpenMP_C_FLAGS}")
 
-#target_compile_options(bitshuffle PRIVATE "-mtune=generic")
-#set_target_properties(bitshuffle PROPERTIES POSITION_INDEPENDENT_CODE ON)
+install(TARGETS ${PROJECT_NAME}_core
+  EXPORT ${PROJECT_NAME}_coreTargets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  PUBLIC_HEADER DESTINATION include)
 
-install(TARGET bitshuffle)
+install(EXPORT ${PROJECT_NAME}_coreTargets
+  FILE ${PROJECT_NAME}_coreTargets.cmake
+  NAMESPACE ${PROJECT_NAME}::core::
+  DESTINATION lib/cmake/${PROJECT_NAME})
