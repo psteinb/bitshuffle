@@ -1202,7 +1202,7 @@ int64_t bshuf_blocked_wrap_fun(bshufBlockFunDef fun, const void* in, void* out, 
 int64_t bshuf_blocked_wrap_fun_nthreads(bshufBlockFunDef fun, const void* in, void* out, \
                                         const size_t size, const size_t elem_size, size_t block_size, int nthreads) {
 
-    size_t ii;
+    omp_size_t ii = 0;
     int64_t err = 0;
     int64_t count, cum_count=0;
     size_t last_block_size;
@@ -1227,7 +1227,7 @@ int64_t bshuf_blocked_wrap_fun_nthreads(bshufBlockFunDef fun, const void* in, vo
             private(count) reduction(+ : cum_count) \
         num_threads(nthreads)
 #endif
-    for (ii = 0; ii < size / block_size; ii ++) {
+    for (ii = 0; ii < (omp_size_t)(size / block_size); ii ++) {
         count = fun(&C, block_size, elem_size);
         if (count < 0) err = count;
         cum_count += count;
